@@ -24,61 +24,47 @@ import example.mod.CommonProxy;
 import example.mod.ExampleMod;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 
 /**
  * Client-sided proxy. No reference to ExampleJourneymapPlugin is here;
  * we don't want it to be classloaded if Journeymap never loads.
  */
-public class ClientProxy implements CommonProxy
-{
+public class ClientProxy implements CommonProxy {
     @Override
-    public void commonSetupEvent(FMLCommonSetupEvent event)
-    {
+    public void commonSetupEvent(FMLCommonSetupEvent event) {
 
     }
 
     @Override
-    public void imcEnqueue(InterModEnqueueEvent event)
-    {
+    public void imcEnqueue(InterModEnqueueEvent event) {
 
     }
 
     @Override
-    public void imcHandle(InterModProcessEvent event)
-    {
+    public void imcHandle(InterModProcessEvent event) {
 
     }
 
     @Override
-    public void loadCompleteEvent(FMLLoadCompleteEvent event)
-    {
+    public void loadCompleteEvent(FMLLoadCompleteEvent event) {
 
     }
 
     @Override
-    public void clientSetupEvent(FMLClientSetupEvent event)
-    {
-        if (!ModList.get().isLoaded("journeymap"))
-        {
+    public void clientSetupEvent(FMLClientSetupEvent event) {
+        if (!ModList.get().isLoaded("journeymap")) {
             ExampleMod.LOGGER.info("JourneyMap not loaded.");
         }
     }
 
     @Override
-    public void serverStartingEvent(ServerStartingEvent event)
-    {
+    public void serverStartingEvent(ServerStartingEvent event) {
 
     }
 
     @Override
-    public void dedicatedServerSetupEvent(FMLDedicatedServerSetupEvent event)
-    {
+    public void dedicatedServerSetupEvent(FMLDedicatedServerSetupEvent event) {
 
     }
 }

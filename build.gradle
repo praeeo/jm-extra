@@ -23,7 +23,7 @@ buildscript {
     repositories {
         maven {
             name = "forge"
-            url = "https://maven.minecraftforge.net"
+            url = "https://files.minecraftforge.net/maven"
         }
         maven {
             url "https://plugins.gradle.org/m2/"

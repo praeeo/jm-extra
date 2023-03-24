@@ -27,12 +27,7 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,8 +36,7 @@ import org.apache.logging.log4j.Logger;
  */
 @Mod(ExampleMod.MODID)
 @Mod.EventBusSubscriber(modid = ExampleMod.MODID)
-public class ExampleMod
-{
+public class ExampleMod {
     public static final String MODID = "examplemodjm";
     public static final String VERSION = "1.9";
     public static final Logger LOGGER = LogManager.getFormatterLogger(MODID);
@@ -53,56 +47,48 @@ public class ExampleMod
      */
     public static final CommonProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
-    public ExampleMod()
-    {
+    public ExampleMod() {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public void commonSetupEvent(FMLCommonSetupEvent event)
-    {
+    public void commonSetupEvent(FMLCommonSetupEvent event) {
         proxy.commonSetupEvent(event);
         LOGGER.info("ExampleMod commonSetupEvent done");
     }
 
     @SubscribeEvent
-    public void imcEnqueue(InterModEnqueueEvent event)
-    {
+    public void imcEnqueue(InterModEnqueueEvent event) {
         proxy.imcEnqueue(event);
         LOGGER.info("ExampleMod imcEnqueue done");
     }
 
     @SubscribeEvent
-    public void imcHandle(InterModProcessEvent event)
-    {
+    public void imcHandle(InterModProcessEvent event) {
         proxy.imcHandle(event);
         LOGGER.info("ExampleMod imcHandle done");
     }
 
     @SubscribeEvent
-    public void loadCompleteEvent(FMLLoadCompleteEvent event)
-    {
+    public void loadCompleteEvent(FMLLoadCompleteEvent event) {
         proxy.loadCompleteEvent(event);
         LOGGER.info("ExampleMod loadCompleteEvent done");
     }
 
     @SubscribeEvent
-    public void clientSetupEvent(FMLClientSetupEvent event)
-    {
+    public void clientSetupEvent(FMLClientSetupEvent event) {
         proxy.clientSetupEvent(event);
         LOGGER.info("ExampleMod clientSetupEvent done");
     }
 
     @SubscribeEvent
-    public void serverStartingEvent(ServerStartingEvent event)
-    {
+    public void serverStartingEvent(ServerStartingEvent event) {
         proxy.serverStartingEvent(event);
         LOGGER.info("ExampleMod serverStartingEvent done");
     }
 
     @SubscribeEvent
-    public void dedicatedServerSetupEvent(FMLDedicatedServerSetupEvent event)
-    {
+    public void dedicatedServerSetupEvent(FMLDedicatedServerSetupEvent event) {
         proxy.dedicatedServerSetupEvent(event);
         LOGGER.info("ExampleMod dedicatedServerSetupEvent done");
     }

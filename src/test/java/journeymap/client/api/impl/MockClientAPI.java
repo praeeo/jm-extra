@@ -42,8 +42,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.EnumSet;
@@ -56,31 +54,24 @@ import java.util.function.Consumer;
  */
 //@Optional.Interface(iface = "journeymap.client.api.IClientAPI", modid = "journeymap")
 @ParametersAreNonnullByDefault
-enum MockClientAPI implements journeymap.client.api.IClientAPI
-{
+enum MockClientAPI implements journeymap.client.api.IClientAPI {
     INSTANCE;
-
     private final static Logger LOGGER = LogManager.getLogger("journeymap-stub");
 
     // This stub only needs to store displayIds by DisplayType by modId, so a cache of multimaps is convenient
     // and avoids all the boilerplate check-and-create-if-missing mess.
     private final LoadingCache<String, LinkedHashMultimap<DisplayType, String>> modDisplayables =
             CacheBuilder.newBuilder().build(
-                    new CacheLoader<String, LinkedHashMultimap<DisplayType, String>>()
-                    {
-                        public LinkedHashMultimap<DisplayType, String> load(String key)
-                        {
-                            LinkedHashMultimap<DisplayType, String> multimap = LinkedHashMultimap.create();
-                            return multimap;
+                    new CacheLoader<>() {
+                        public LinkedHashMultimap<DisplayType, String> load(String key) {
+                            return LinkedHashMultimap.create();
                         }
                     });
 
 
     @Override
-    public UIState getUIState(Context.UI ui)
-    {
-        if (ui == Context.UI.Any)
-        {
+    public UIState getUIState(Context.UI ui) {
+        if (ui == Context.UI.Any) {
             return null;
         }
 
@@ -92,59 +83,50 @@ enum MockClientAPI implements journeymap.client.api.IClientAPI
     }
 
     @Override
-    public void subscribe(String modId, EnumSet<ClientEvent.Type> eventTypes)
-    {
+    public void subscribe(String modId, EnumSet<ClientEvent.Type> eventTypes) {
         // Not implemented
     }
 
     @Override
-    public void show(Displayable displayable)
-    {
+    public void show(Displayable displayable) {
         showDisplayable(displayable.getModId(), displayable.getDisplayType(), displayable.getId());
     }
 
-    private void showDisplayable(String modId, DisplayType displayType, String displayId)
-    {
+    private void showDisplayable(String modId, DisplayType displayType, String displayId) {
         modDisplayables.getUnchecked(modId).put(displayType, displayId);
         log(String.format("Showed %s:%s:%s", modId, displayType, displayId));
     }
 
     @Override
-    public void remove(Displayable displayable)
-    {
+    public void remove(Displayable displayable) {
         modDisplayables.getUnchecked(displayable.getModId()).remove(displayable.getDisplayType(), displayable.getId());
     }
 
     @Override
-    public void removeAll(String modId, DisplayType displayType)
-    {
+    public void removeAll(String modId, DisplayType displayType) {
         modDisplayables.getUnchecked(modId).removeAll(displayType);
         log(String.format("Removed all %s:%s", modId, displayType));
     }
 
     @Override
-    public void removeAll(String modId)
-    {
+    public void removeAll(String modId) {
         modDisplayables.invalidateAll();
         log(String.format("Removed all %s", modId));
     }
 
     @Override
-    public boolean exists(Displayable displayable)
-    {
+    public boolean exists(Displayable displayable) {
         return modDisplayables.getUnchecked(displayable.getModId()).containsEntry(displayable.getDisplayType(), displayable.getId());
     }
 
     @Override
-    public boolean playerAccepts(String modId, DisplayType displayType)
-    {
+    public boolean playerAccepts(String modId, DisplayType displayType) {
         return true;
     }
 
     @Override
     public void requestMapTile(String modId, ResourceKey<Level> dimension, Context.MapType mapType, net.minecraft.world.level.ChunkPos startChunk, ChunkPos endChunk,
-                               @Nullable Integer chunkY, int zoom, boolean showGrid, final Consumer<NativeImage> callback)
-    {
+                               @Nullable Integer chunkY, int zoom, boolean showGrid, final Consumer<NativeImage> callback) {
         // Determine chunks for coordinates at zoom level
         final int scale = (int) Math.pow(2, zoom);
         final int chunkSize = 32 / scale;
@@ -156,69 +138,58 @@ enum MockClientAPI implements journeymap.client.api.IClientAPI
     }
 
     @Override
-    public void toggleDisplay(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI, boolean enable)
-    {
+    public void toggleDisplay(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI, boolean enable) {
         log(String.format("Toggled display in %s:%s:%s:%s", dimension, mapType, mapUI, enable));
     }
 
     @Override
-    public void toggleWaypoints(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI, boolean enable)
-    {
+    public void toggleWaypoints(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI, boolean enable) {
         log(String.format("Toggled waypoints in %s:%s:%s:%s", dimension, mapType, mapUI, enable));
     }
 
     @Override
-    public boolean isDisplayEnabled(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI)
-    {
+    public boolean isDisplayEnabled(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI) {
         return false;
     }
 
     @Override
-    public boolean isWaypointsEnabled(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI)
-    {
+    public boolean isWaypointsEnabled(@Nullable ResourceKey<Level> dimension, Context.MapType mapType, Context.UI mapUI) {
         return false;
     }
 
     @Override
-    public File getDataPath(String modId)
-    {
+    public File getDataPath(String modId) {
         return new File("");
     }
 
     @Override
-    public List<Waypoint> getAllWaypoints()
-    {
+    public List<Waypoint> getAllWaypoints() {
         return null;
     }
 
     @Override
-    public List<Waypoint> getAllWaypoints(ResourceKey<Level> dim)
-    {
+    public List<Waypoint> getAllWaypoints(ResourceKey<Level> dim) {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public Waypoint getWaypoint(String modId, String displayId)
-    {
+    public Waypoint getWaypoint(String modId, String displayId) {
         return null;
     }
 
     @Override
-    public List<Waypoint> getWaypoints(String modId)
-    {
+    public List<Waypoint> getWaypoints(String modId) {
         return null;
     }
 
     @Override
-    public void setWorldId(String identifier)
-    {
+    public void setWorldId(String identifier) {
 
     }
 
     @Override
-    public String getWorldId()
-    {
+    public String getWorldId() {
         return null;
     }
 
@@ -227,8 +198,7 @@ enum MockClientAPI implements journeymap.client.api.IClientAPI
      *
      * @return
      */
-    private NativeImage createFakeImage(int width, int height)
-    {
+    private NativeImage createFakeImage(int width, int height) {
         NativeImage image = new NativeImage(width, height, false);
         int color = new Random().nextInt(0xffffff);
         image.fillRect(0, 0, 512, 512, color);
@@ -240,8 +210,7 @@ enum MockClientAPI implements journeymap.client.api.IClientAPI
      *
      * @param message
      */
-    private void log(String message)
-    {
+    private void log(String message) {
         LOGGER.info(String.format("[%s] %s", getClass().getSimpleName(), message));
     }
 }

@@ -35,10 +35,7 @@ import net.minecraftforge.common.MinecraftForge;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumSet;
 
-import static journeymap.client.api.event.ClientEvent.Type.DEATH_WAYPOINT;
-import static journeymap.client.api.event.ClientEvent.Type.MAPPING_STARTED;
-import static journeymap.client.api.event.ClientEvent.Type.MAPPING_STOPPED;
-import static journeymap.client.api.event.ClientEvent.Type.REGISTRY;
+import static journeymap.client.api.event.ClientEvent.Type.*;
 
 /**
  * Example plugin implementation by the example mod. To prevent classloader errors if JourneyMap isn't loaded
@@ -51,8 +48,7 @@ import static journeymap.client.api.event.ClientEvent.Type.REGISTRY;
  */
 @ParametersAreNonnullByDefault
 @journeymap.client.api.ClientPlugin
-public class ExampleJourneymapPlugin implements IClientPlugin
-{
+public class ExampleJourneymapPlugin implements IClientPlugin {
     // API reference
     private IClientAPI jmAPI = null;
 
@@ -62,18 +58,15 @@ public class ExampleJourneymapPlugin implements IClientPlugin
 
     private static ExampleJourneymapPlugin INSTANCE;
 
-    public ExampleJourneymapPlugin()
-    {
+    public ExampleJourneymapPlugin() {
         INSTANCE = this;
     }
 
-    public static ExampleJourneymapPlugin getInstance()
-    {
+    public static ExampleJourneymapPlugin getInstance() {
         return INSTANCE;
     }
 
-    public ClientProperties getClientProperties()
-    {
+    public ClientProperties getClientProperties() {
         return clientProperties;
     }
 
@@ -84,8 +77,7 @@ public class ExampleJourneymapPlugin implements IClientPlugin
      * @param jmAPI Client API implementation
      */
     @Override
-    public void initialize(final IClientAPI jmAPI)
-    {
+    public void initialize(final IClientAPI jmAPI) {
         // Set ClientProxy.SampleWaypointFactory with an implementation that uses the JourneyMap IClientAPI under the covers.
         this.jmAPI = jmAPI;
 
@@ -103,8 +95,7 @@ public class ExampleJourneymapPlugin implements IClientPlugin
      * Used by JourneyMap to associate a modId with this plugin.
      */
     @Override
-    public String getModId()
-    {
+    public String getModId() {
         return ExampleMod.MODID;
     }
 
@@ -123,12 +114,9 @@ public class ExampleJourneymapPlugin implements IClientPlugin
      * @param event the event
      */
     @Override
-    public void onEvent(ClientEvent event)
-    {
-        try
-        {
-            switch (event.type)
-            {
+    public void onEvent(ClientEvent event) {
+        try {
+            switch (event.type) {
                 case MAPPING_STARTED:
                     onMappingStarted(event);
                     break;
@@ -144,22 +132,20 @@ public class ExampleJourneymapPlugin implements IClientPlugin
                     break;
                 case REGISTRY:
                     RegistryEvent registryEvent = (RegistryEvent) event;
-                    switch(registryEvent.getRegistryType()) {
+                    switch (registryEvent.getRegistryType()) {
                         case OPTIONS:
                             this.clientProperties = new ClientProperties();
                             break;
                         case INFO_SLOT:
-                            ((RegistryEvent.InfoSlotRegistryEvent)registryEvent)
-                                    .register(getModId(), "Current Millis", 1000, ()-> "Millis: " + System.currentTimeMillis());
-                            ((RegistryEvent.InfoSlotRegistryEvent)registryEvent)
+                            ((RegistryEvent.InfoSlotRegistryEvent) registryEvent)
+                                    .register(getModId(), "Current Millis", 1000, () -> "Millis: " + System.currentTimeMillis());
+                            ((RegistryEvent.InfoSlotRegistryEvent) registryEvent)
                                     .register(getModId(), "Current Ticks", 10, ExampleJourneymapPlugin::getTicks);
                             break;
                     }
                     break;
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             ExampleMod.LOGGER.error(t.getMessage(), t);
         }
     }
@@ -169,7 +155,7 @@ public class ExampleJourneymapPlugin implements IClientPlugin
     }
 
     public void onWaypointEvent(WaypointEvent event) {
-        switch(event.getContext()) {
+        switch (event.getContext()) {
             case READ:
                 break;
             case CREATE:
@@ -186,33 +172,28 @@ public class ExampleJourneymapPlugin implements IClientPlugin
      *
      * @param event client event
      */
-    void onMappingStarted(ClientEvent event)
-    {
+    void onMappingStarted(ClientEvent event) {
         // Create a bunch of random Image Overlays around the player
-        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Image))
-        {
+        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Image)) {
             BlockPos pos = Minecraft.getInstance().player.blockPosition();
             SampleImageOverlayFactory.create(jmAPI, pos, 5, 256, 128);
         }
 
         // Create a bunch of random Marker Overlays around the player
-        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Marker))
-        {
+        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Marker)) {
             net.minecraft.core.BlockPos pos = Minecraft.getInstance().player.blockPosition();
             SampleMarkerOverlayFactory.create(jmAPI, pos, 64, 256);
         }
 
         // Create a waypoint for the player's bed location.  The ForgeEventListener
         // will keep it updated if the player sleeps elsewhere.
-        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Waypoint))
-        {
+        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Waypoint)) {
             BlockPos pos = Minecraft.getInstance().player.getSleepingPos().orElse(new BlockPos(0, 0, 0));
             SampleWaypointFactory.createBedWaypoint(jmAPI, pos, event.dimension);
         }
 
         // Create some random complex polygon overlays
-        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Polygon))
-        {
+        if (jmAPI.playerAccepts(ExampleMod.MODID, DisplayType.Polygon)) {
             BlockPos pos = Minecraft.getInstance().player.blockPosition();
             SampleComplexPolygonOverlayFactory.create(jmAPI, pos, event.dimension, 256);
         }
@@ -226,8 +207,7 @@ public class ExampleJourneymapPlugin implements IClientPlugin
      *
      * @param event client event
      */
-    void onMappingStopped(ClientEvent event)
-    {
+    void onMappingStopped(ClientEvent event) {
         // Clear everything
         jmAPI.removeAll(ExampleMod.MODID);
     }
@@ -235,8 +215,7 @@ public class ExampleJourneymapPlugin implements IClientPlugin
     /**
      * Do something when JourneyMap is about to create a Deathpoint.
      */
-    void onDeathpoint(DeathWaypointEvent event)
-    {
+    void onDeathpoint(DeathWaypointEvent event) {
         // Could cancel the event, which would prevent the Deathpoint from actually being created.
         // For now, don't do anything.
     }
